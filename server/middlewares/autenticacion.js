@@ -9,7 +9,7 @@ let verificarToken = (req, res, next) => {
 
     jwt.verify(token, process.env.SEED, (err, decoded) => {
 
-        if(err){
+        if (err) {
             return res.status(401).json({
                 ok: false,
                 err: {
@@ -24,7 +24,7 @@ let verificarToken = (req, res, next) => {
 
     });
 
-    
+
 };
 
 
@@ -33,9 +33,9 @@ let verificarToken = (req, res, next) => {
 // ===============
 let verificarAdminRole = (req, res, next) => {
 
-    if(req.usuario.role != 'ADMIN_ROLE'){
+    if (req.usuario.role != 'ADMIN_ROLE') {
         return res.json({
-            ok:false,
+            ok: false,
             err: {
                 message: 'Rol incorrecto.'
             }
@@ -43,10 +43,37 @@ let verificarAdminRole = (req, res, next) => {
     }
 
     next();
-    
+
+};
+
+// ===============
+// Verifica TOKEN en imagen
+// ===============
+let verificarTokenImg = (req, res, next) => {
+
+    let token = req.query.token;
+
+    jwt.verify(token, process.env.SEED, (err, decoded) => {
+
+        if (err) {
+            return res.status(401).json({
+                ok: false,
+                err: {
+                    message: 'Token no válido'
+                }
+            });
+        }
+
+        req.usuario = decoded.usuario;
+
+        next();
+
+    });
+
 };
 
 module.exports = {
     verificarToken,
-    verificarAdminRole
+    verificarAdminRole,
+    verificarTokenImg
 }
